@@ -8,24 +8,28 @@ import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 
 const Nav = () => {
   const isUserLoggedIn = true;
+  const {data: session} = useSession();
 
-  const print = ({items}) => {
-    console.log(items);
-  }
+
+  // const print = ({items}) => {
+  //   console.log(items);
+  // }
 
     // useState
   const [providers, setProviders] = useState(null);
-  const [toggleDropdown, setToggleDropdown] = useState(true);
+  const [toggleDropdown, setToggleDropdown] = useState(false);
 
+  providers;
 
   useEffect(() => {
-    const setProviders = async () => {
+    const setUpProviders = async () => {
         const response = await getProviders();
 
         setProviders(response);
     };
 
-    setProviders();
+    setUpProviders();
+    console.log(providers);
   }, []);
 
   return (
@@ -40,10 +44,11 @@ const Nav = () => {
         />
         <p className="logo_text"> Promptopia </p>
       </Link>
+      {/* {console.log(providers)} */}
 
       {/* Desktop navigation  */}
       <div className="sm:flex hidden">
-        {isUserLoggedIn ? (
+        {session?.user ? (
           <div className="flex gap-3 md:gap-5">
             <Link href="/create-prompt" className="black_btn">
               Create Post
@@ -54,7 +59,7 @@ const Nav = () => {
 
             <Link href="/profile">
               <Image
-                src={"/assets/images/logo.svg"}
+                src={session?.user.image}
                 width={37}
                 height={37}
                 className="rounded-full"
@@ -66,6 +71,7 @@ const Nav = () => {
           </div>
         ) : (
           <>
+            {alert(providers)}
             {providers &&  Object.values(providers).map((provider) => (
                     <button
                     type="button"
@@ -81,12 +87,11 @@ const Nav = () => {
         )}
       </div>
 
-
       {/* Mobile navigation */}
       <div className="sm:hidden flex relative">
-        {isUserLoggedIn ? (
+        {session?.user ? (
             <div className="flex">
-              <button className="" onClick={() => console.log(`Random shit`)}>
+              <button className="" >
                   <Image src="/assets/images/Discord_cat.png"
                       width={37}
                       height={37}
@@ -118,7 +123,7 @@ const Nav = () => {
 
                       }}
                       className="mt-5 w-full black_btn"
-                    >
+                      >
                         Sign Out
                       </button>
                   </div>
